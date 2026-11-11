@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>لوحة التحكم — Polo Store</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#09090A; --panel:#151517; --panel2:#1D1D20; --line:#2C2C30;
+  --gold:#C9A03D; --gold2:#E8CC82; --ink:#F5F2EA; --muted:#9D998E;
+  --danger:#E5736A; --ok:#6CC08B; --on-gold:#1A1405;
+  --font-display:'Reem Kufi','Cairo',Tahoma,sans-serif; --font-body:'Cairo',Tahoma,Arial,sans-serif;
+  color-scheme:dark; box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);line-height:1.7;-webkit-text-size-adjust:100%;overflow-x:hidden}
+button{font-family:inherit;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--gold2);outline-offset:2px}
+.screen{display:none;min-height:100%}
+.screen.on{display:block}
+.wrap{max-width:560px;margin-inline:auto;padding:16px}
+
+/* ---------- intro ---------- */
+#intro.on{display:block;height:100%;position:relative;overflow:hidden;background:#050505}
+#gl{position:absolute;inset:0;width:100%;height:100%;display:block}
+#logoFb{display:none;position:absolute;top:6%;left:50%;transform:translateX(-50%);width:min(92%,440px);mix-blend-mode:screen;animation:bob 6s ease-in-out infinite}
+.nogl #logoFb{display:block}
+.nogl #intro{background:radial-gradient(ellipse at 50% 30%,#2a2210,#09090A 70%)}
+.vignette{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,transparent 40%,rgba(0,0,0,.75));pointer-events:none}
+.actions{position:absolute;inset-inline:0;bottom:calc(9% + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;align-items:center;gap:20px}
+.floaty{animation:bob 4.6s ease-in-out infinite}
+.floaty.b{animation-duration:5.6s;animation-delay:-2s}
+@keyframes bob{0%,100%{translate:0 0}50%{translate:0 -10px}}
+.tilt{display:inline-block;transform:perspective(600px) translate(var(--tx,0px),var(--ty,0px)) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .14s ease-out}
+.btn-gold{display:inline-block;border:0;border-radius:999px;padding:16px 54px;font-size:1.3rem;font-weight:700;color:var(--on-gold);text-decoration:none;
+  background:linear-gradient(135deg,var(--gold2),var(--gold) 60%,#A88229);box-shadow:0 0 34px rgba(201,160,61,.55),0 10px 24px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.5)}
+.btn-ghost{display:inline-block;border:1.5px solid var(--gold);border-radius:999px;padding:11px 30px;font-size:1rem;font-weight:600;color:var(--gold2);text-decoration:none;
+  background:rgba(10,10,10,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 0 18px rgba(201,160,61,.2)}
+.peek{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));inset-inline-start:12px;font-size:.75rem;color:var(--muted);text-decoration:none;border:1px dashed var(--line);border-radius:8px;padding:2px 10px;background:rgba(0,0,0,.4)}
+
+/* ---------- bars & shared ---------- */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(9,9,10,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar h1{flex:1;margin:0;font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:var(--gold2)}
+.ib{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);display:grid;place-items:center;flex:none}
+.ib svg{width:20px;height:20px}
+.chipbtn{border:1px solid var(--gold);background:transparent;color:var(--gold2);border-radius:999px;padding:5px 14px;font-weight:600;font-size:.85rem}
+.lead{color:var(--muted);margin:6px 0 18px}
+.empty{color:var(--muted);text-align:center;padding:48px 12px;border:1px dashed var(--line);border-radius:14px}
+.pad-b{padding-bottom:120px}
+
+/* cities */
+.city{display:flex;justify-content:space-between;align-items:center;width:100%;padding:18px 18px;margin-bottom:10px;background:var(--panel);border:1px solid var(--line);border-inline-start:4px solid var(--gold);border-radius:14px;color:var(--ink);font-size:1.15rem;font-weight:700;text-align:start}
+.city svg{width:22px;height:22px;color:var(--gold)}
+.city:active{background:var(--panel2)}
+
+/* offers */
+.offer{display:block;width:100%;padding:0;margin-bottom:16px;background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;color:var(--ink);text-align:start}
+.offer .img{display:grid;place-items:center;aspect-ratio:4/3;background:#0D0D0E;overflow:hidden;position:relative}
+.offer .img img{width:100%;height:100%;object-fit:cover;display:block}
+.offer .img svg{width:48%}
+.offer .info{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px}
+.offer .nm{font-weight:700;font-size:1.05rem;line-height:1.5}
+.offer .pr{color:var(--gold2);font-weight:700;white-space:nowrap}
+.offer .more{display:block;padding:0 16px 14px;color:var(--muted);font-size:.88rem}
+
+/* sheet */
+.sheet-wrap{position:fixed;inset:0;z-index:50;display:none}
+.sheet-wrap.on{display:block}
+.backdrop{position:absolute;inset:0;background:rgba(0,0,0,.72)}
+.sheet{position:absolute;bottom:0;left:0;right:0;max-width:560px;margin-inline:auto;max-height:92%;overflow-y:auto;background:var(--panel);border-radius:22px 22px 0 0;border-top:2px solid var(--gold);padding:0 0 calc(18px + env(safe-area-inset-bottom,0px));animation:up .25s ease-out}
+@keyframes up{from{transform:translateY(24%);opacity:.2}to{transform:none;opacity:1}}
+.sheet .in{padding:16px}
+.sheet .x{position:absolute;top:12px;inset-inline-end:12px;z-index:2;background:rgba(0,0,0,.6);color:#fff}
+.gal{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;background:#0D0D0E;scrollbar-width:none}
+.gal::-webkit-scrollbar{display:none}
+.gal>*{flex:0 0 100%;scroll-snap-align:center;aspect-ratio:4/3;object-fit:cover;display:grid;place-items:center}
+.gal svg{width:52%;margin:auto}
+.price-big{color:var(--gold2);font-weight:700;font-size:1.3rem}
+.stepper{display:inline-flex;align-items:center;gap:14px;background:var(--panel2);border-radius:12px;padding:4px}
+.stepper button{width:38px;height:38px;border-radius:10px;border:0;background:var(--panel);color:var(--gold2);font-size:1.3rem;font-weight:700}
+.stepper b{min-width:24px;text-align:center}
+.piece{display:grid;grid-template-columns:auto 1fr 1fr;gap:8px;align-items:center;padding:10px;background:var(--panel2);border-radius:12px;margin-top:8px}
+.piece .pn{font-weight:700;color:var(--gold2);font-size:.9rem}
+.piece label{margin:0}
+.piece select{padding:9px 8px}
+.btn-main{display:block;width:100%;border:0;border-radius:14px;padding:15px;font-size:1.1rem;font-weight:700;color:var(--on-gold);background:linear-gradient(135deg,var(--gold2),var(--gold));box-shadow:0 8px 22px rgba(201,160,61,.3);margin-top:16px}
+.btn-main:disabled{opacity:.4;box-shadow:none}
+
+/* inputs */
+select,input,textarea{width:100%;background:#0F0F10;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:11px 12px;font:inherit;font-size:16px}
+textarea{resize:vertical;min-height:70px}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);outline:none}
+input[type=radio],input[type=checkbox]{width:auto;accent-color:var(--gold)}
+label{display:block;font-size:.86rem;color:var(--muted);margin-bottom:4px}
+.field{margin-bottom:12px}
+.field.err input,.field.err select,.field.err textarea{border-color:var(--danger)}
+.field .em{color:var(--danger);font-size:.78rem;display:none}
+.field.err .em{display:block}
+.req::after{content:" *";color:var(--gold)}
+
+/* cart bar */
+.cartbar{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:40;max-width:560px;margin-inline:auto;display:flex;align-items:center;gap:12px;
+  background:linear-gradient(135deg,var(--gold2),var(--gold));color:var(--on-gold);border-radius:18px;padding:10px 12px 10px 14px;box-shadow:0 10px 30px rgba(201,160,61,.4);transform:translateY(170%);transition:transform .35s cubic-bezier(.2,.9,.3,1.2)}
+.cartbar.show{transform:none}
+.cartbar.bump{animation:bump .55s}
+@keyframes bump{0%{transform:none}25%{transform:scale(1.07,.9)}55%{transform:scale(.97,1.07)}100%{transform:none}}
+.bag{position:relative;width:42px;height:42px;display:grid;place-items:center}
+.bag svg{width:28px;height:28px}
+.badge{position:absolute;top:-4px;inset-inline-start:-6px;background:var(--on-gold);color:var(--gold2);min-width:21px;height:21px;border-radius:99px;font-size:.78rem;font-weight:700;display:grid;place-items:center;padding-inline:5px}
+.cartbar .t{flex:1;line-height:1.3}
+.cartbar .t small{display:block;opacity:.75;font-size:.78rem}
+.cartbar .t b{font-size:1.1rem}
+.cartbar button{border:0;background:var(--on-gold);color:var(--gold2);font-weight:700;border-radius:12px;padding:11px 16px;font-size:.95rem}
+.fly{position:fixed;z-index:80;pointer-events:none}
+.fly>div{width:100%;height:100%;border-radius:18px;overflow:hidden;border:2px solid var(--gold2);background:#0D0D0E;box-shadow:0 0 24px rgba(232,204,130,.7);display:grid;place-items:center}
+.fly img{width:100%;height:100%;object-fit:cover}
+.fly svg{width:70%}
+
+/* checkout */
+.sec-t{font-family:var(--font-display);color:var(--gold2);font-size:1.15rem;margin:22px 0 10px}
+.line{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;padding:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:8px}
+.line .th{width:56px;height:56px;border-radius:10px;overflow:hidden;background:#0D0D0E;display:grid;place-items:center}
+.line .th img{width:100%;height:100%;object-fit:cover}
+.line .th svg{width:70%}
+.line .nm{font-weight:700;font-size:.95rem;line-height:1.4}
+.line .mt{color:var(--muted);font-size:.8rem;line-height:1.5}
+.rm{background:transparent;border:0;color:var(--danger);font-weight:600;font-size:.82rem;padding:6px}
+.zone{display:flex;align-items:center;gap:12px;padding:14px;border:1.5px solid var(--line);border-radius:12px;background:var(--panel);margin-bottom:8px;cursor:pointer;color:var(--ink);font-size:1rem}
+.zone span{flex:1;font-weight:600}
+.zone b{color:var(--gold2)}
+.zone.sel{border-color:var(--gold);background:#1B170C}
+.sum{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:18px}
+.sum div{display:flex;justify-content:space-between;padding:4px 0;color:var(--muted)}
+.sum .tot{color:var(--gold2);font-weight:700;font-size:1.2rem;border-top:1px dashed var(--line);margin-top:6px;padding-top:10px}
+.done{text-align:center;padding:60px 20px}
+.done .ok{width:84px;height:84px;margin:0 auto 18px;border-radius:50%;border:2px solid var(--gold);display:grid;place-items:center;color:var(--gold2);box-shadow:0 0 30px rgba(201,160,61,.4)}
+.done .ok svg{width:42px;height:42px}
+.done h2{font-family:var(--font-display);margin:0 0 6px}
+
+/* dialog & toast */
+.dlg{position:fixed;inset:0;z-index:90;display:none;place-items:center;padding:20px}
+.dlg.on{display:grid}
+.dlg .box{position:relative;background:var(--panel);border:1px solid var(--gold);border-radius:18px;padding:20px;max-width:380px;width:100%}
+.dlg .box p{margin:0 0 16px;line-height:1.7}
+.dlg .row{display:flex;gap:10px}
+.dlg .row>*{flex:1}
+.toast{position:fixed;bottom:calc(88px + env(safe-area-inset-bottom,0px));left:0;right:0;margin-inline:auto;width:max-content;max-width:90%;background:var(--gold2);color:var(--on-gold);padding:9px 20px;border-radius:999px;font-weight:700;font-size:.9rem;opacity:0;transform:translateY(10px);transition:.2s;pointer-events:none;z-index:95}
+.toast.show{opacity:1;transform:none}
+
+/* ---------- admin ---------- */
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);font-weight:700;font-size:.9rem;text-decoration:none;text-align:center}
+.btn.gold{background:linear-gradient(135deg,var(--gold2),var(--gold));color:var(--on-gold);border-color:transparent}
+.btn.danger{color:var(--danger);border-color:#5A2A26;background:transparent}
+.btn.ok{color:var(--ok);border-color:#2A5A3A;background:transparent}
+.btn.sm{padding:6px 12px;font-size:.82rem}
+.btn:disabled{opacity:.4}
+.login{max-width:380px;margin:12vh auto 0;padding:22px;background:var(--panel);border:1px solid var(--line);border-radius:18px}
+.login img{width:200px;display:block;margin:0 auto 10px;mix-blend-mode:screen}
+.note{color:var(--muted);font-size:.8rem}
+.tabs{display:flex;gap:6px;margin:14px 0}
+.tab{flex:1;padding:10px 4px;border-radius:10px;background:var(--panel);border:1px solid var(--line);color:var(--muted);font-weight:700;font-size:.9rem;position:relative}
+.tab.on{background:var(--gold);color:var(--on-gold);border-color:var(--gold)}
+.tab i{font-style:normal;background:var(--danger);color:#fff;border-radius:99px;font-size:.7rem;padding:1px 7px;margin-inline-start:4px}
+.cityrow{display:flex;gap:8px;align-items:center}
+.cityrow select{flex:1;font-weight:700}
+.rowc{display:flex;gap:10px;align-items:center;padding:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:8px}
+.rowc .th{width:60px;height:60px;border-radius:10px;overflow:hidden;background:#0D0D0E;display:grid;place-items:center;flex:none}
+.rowc .th img{width:100%;height:100%;object-fit:cover}
+.rowc .th svg{width:70%}
+.rowc .g{flex:1;min-width:0}
+.rowc .g b{display:block;line-height:1.4}
+.rowc .g span{color:var(--gold2);font-size:.9rem}
+.rowc .acts{display:flex;flex-direction:column;gap:6px}
+.addrow{display:grid;grid-template-columns:1fr 110px auto;gap:8px;margin-bottom:12px}
+.ord{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+.ord.done-o{opacity:.7}
+.ord .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.pill{font-size:.75rem;font-weight:700;padding:2px 10px;border-radius:99px;border:1px solid}
+.pill.new{color:var(--gold2);border-color:var(--gold)}
+.pill.dl{color:var(--ok);border-color:#2A5A3A}
+.ord .items .line{grid-template-columns:50px 1fr;background:var(--panel2);border:0}
+.ord .items .th{width:50px;height:50px}
+.cust{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:.88rem;margin:10px 0;padding:10px;background:var(--panel2);border-radius:10px}
+.cust dt{color:var(--muted)}
+.cust dd{margin:0;word-break:break-word}
+.oact{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.imgs{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.imgs .im{position:relative;width:70px;height:70px;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+.imgs .im img{width:100%;height:100%;object-fit:cover}
+.imgs .im button{position:absolute;top:2px;inset-inline-end:2px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(0,0,0,.75);color:#fff;font-size:.9rem;line-height:1}
+.seg{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.hide{display:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<section class="screen on" id="admin">
+  <div id="admLogin" class="login">
+    <img src="logo.jpg" alt="">
+    <div class="field"><label for="aEm">الإيميل</label><input id="aEm" type="email" dir="ltr" autocomplete="username"></div>
+    <div class="field"><label for="aPw">كلمة المرور</label><input id="aPw" type="password" dir="ltr" autocomplete="current-password"></div>
+    <button class="btn gold" style="width:100%" id="aGo">دخول</button>
+    <p class="note" id="aErr" style="color:var(--danger);margin:10px 0 0;min-height:1.4em"></p>
+  </div>
+  <div id="admApp" class="hide">
+    <div class="bar">
+      <h1>لوحة التحكم</h1>
+      <a class="btn sm" href="index.html">المتجر</a>
+      <button class="btn sm danger" id="aOut">خروج</button>
+    </div>
+    <div class="wrap">
+      <div class="cityrow">
+        <select id="aCity" aria-label="المدينة"></select>
+        <button class="btn" id="aCities">المدن</button>
+      </div>
+      <p class="note" id="aHint"></p>
+      <div class="tabs" id="aTabs">
+        <button class="tab on" data-t="offers">العروض</button>
+        <button class="tab" data-t="zones">التوصيل</button>
+        <button class="tab" data-t="orders">الطلبات</button>
+      </div>
+      <div id="aBody"></div>
+    </div>
+  </div>
+</section>
+
+<div class="sheet-wrap" id="form">
+  <div class="backdrop" data-close></div>
+  <div class="sheet" id="formBox" role="dialog" aria-modal="true"></div>
+</div>
+<div class="dlg" id="dlg"><div class="backdrop"></div><div class="box"><p id="dlgMsg"></p><div class="row"><button class="btn" id="dlgNo">إلغاء</button><button class="btn gold" id="dlgYes">تأكيد</button></div></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SB_URL = 'https://zltjbhukzbuwjtufguln.supabase.co';
+const SB_KEY = 'sb_publishable_8dLtZzN2NhJpRMjky6SnvQ_jEKq0VDz';
+const CUR = 'ج.س';
+const BUCKET = 'offers';
+const sb = window.supabase.createClient(SB_URL, SB_KEY);
+
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money = n => Number(n || 0).toLocaleString('en-US') + ' ' + CUR;
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const digits = s => String(s).replace(/[^\d]/g, '');
+const list = s => String(s).split(/[,،\n]/).map(x => x.trim()).filter(Boolean);
+let toastT;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2200)}
+function confirmBox(msg, yes='تأكيد'){
+  return new Promise(res=>{
+    $('#dlgMsg').textContent=msg; $('#dlgYes').textContent=yes; $('#dlg').classList.add('on');
+    const end=v=>{$('#dlg').classList.remove('on');$('#dlgYes').onclick=$('#dlgNo').onclick=null;res(v)};
+    $('#dlgYes').onclick=()=>end(true); $('#dlgNo').onclick=()=>end(false);
+  });
+}
+/* يرمي خطأ لو فشل أي طلب لقاعدة البيانات */
+async function q(p){ const r=await p; if(r.error) throw r.error; return r; }
+const LOADING='<div class="empty">جاري التحميل…</div>';
+const FAIL='<div class="empty">تعذّر تحميل البيانات.<br><button class="btn" style="margin-top:10px" id="retry">إعادة المحاولة</button></div>';
+
+const SHAPES={
+  tee:'M30 12 L42 8 Q50 16 58 8 L70 12 L90 30 L80 42 L72 36 L72 90 L28 90 L28 36 L20 42 L10 30 Z',
+  hoodie:'M32 14 L42 8 Q50 22 58 8 L68 14 L92 70 L80 76 L72 52 L72 90 L28 90 L28 52 L20 76 L8 70 Z',
+  pants:'M30 8 L70 8 L74 92 L56 92 L50 36 L44 92 L26 92 Z',
+  jacket:'M30 10 L42 8 L50 20 L58 8 L70 10 L92 64 L80 70 L72 48 L72 90 L28 90 L28 48 L20 70 L8 64 Z M50 20 V90',
+  dress:'M38 8 L46 8 L50 18 L54 8 L62 8 L60 34 L80 92 L20 92 L40 34 Z'
+};
+const art = s => `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="${SHAPES[s]||SHAPES.tee}" fill="#1c1a14" stroke="#C9A03D" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
+const pic = o => (o.images && o.images.length) ? `<img src="${esc(o.images[0])}" alt="" loading="lazy">` : art(o.shape);
+const thumbHTML = it => it.thumb ? `<img src="${esc(it.thumb)}" alt="" loading="lazy">` : art(it.shape);
+
+function closeSheet(id){ $(id).classList.remove('on'); document.body.style.overflow=''; }
+let formCleanup=null;
+function closeForm(){ if(formCleanup){const f=formCleanup;formCleanup=null;f()} closeSheet('#form'); }
+$('#form .backdrop').onclick=closeForm;
+
+/* =========================================================
+   الدخول
+   ========================================================= */
+let adm={city:null,tab:'offers',of:'all'}, CITIES=[], pollT=null;
+
+function showLogin(){ $('#admLogin').classList.remove('hide'); $('#admApp').classList.add('hide'); clearInterval(pollT); }
+async function enter(){
+  $('#admLogin').classList.add('hide'); $('#admApp').classList.remove('hide');
+  await loadCities(); renderAdmin();
+  clearInterval(pollT);
+  pollT=setInterval(()=>{ if(adm.tab==='orders'&&!document.hidden&&!$('#form').classList.contains('on')&&!$('#dlg').classList.contains('on')) renderAdmin(); },30000);
+}
+async function login(){
+  const email=$('#aEm').value.trim(), password=$('#aPw').value;
+  if(!email||!password){ $('#aErr').textContent='اكتب الإيميل وكلمة المرور'; return; }
+  const b=$('#aGo'); b.disabled=true; b.textContent='جاري الدخول…'; $('#aErr').textContent='';
+  const {error}=await sb.auth.signInWithPassword({email,password});
+  b.disabled=false; b.textContent='دخول';
+  if(error){ $('#aErr').textContent='الإيميل أو كلمة المرور غير صحيحة'; return; }
+  $('#aPw').value=''; enter();
+}
+$('#aGo').onclick=login;
+$('#aPw').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+$('#aOut').onclick=async()=>{ await sb.auth.signOut(); showLogin(); };
+(async()=>{
+  const {data}=await sb.auth.getSession();
+  if(data.session) enter(); else showLogin();
+})();
+
+/* =========================================================
+   عام
+   ========================================================= */
+async function loadCities(){
+  const {data}=await q(sb.from('cities').select('id,name').order('created_at'));
+  CITIES=data;
+  if(!CITIES.find(c=>c.id===adm.city)) adm.city=CITIES[0]?CITIES[0].id:null;
+}
+const admCity=()=>CITIES.find(c=>c.id===adm.city);
+
+async function renderAdmin(){
+  $('#aCity').innerHTML=CITIES.map(c=>`<option value="${c.id}"${c.id===adm.city?' selected':''}>${esc(c.name)}</option>`).join('')||'<option>لا توجد مدن</option>';
+  $('#aHint').textContent=adm.city?`كل ما تعدله هنا يخص مدينة «${admCity().name}» فقط.`:'ابدأ بإضافة مدينة من زر «المدن».';
+  $$('#aTabs .tab').forEach(t=>t.classList.toggle('on',t.dataset.t===adm.tab));
+  if(!adm.city){ $('#aBody').innerHTML='<div class="empty">لا توجد مدن بعد. اضغط «المدن» وأضف أول مدينة.</div>'; return; }
+  try{
+    const r=await q(sb.from('orders').select('id',{count:'exact',head:true}).eq('city_id',adm.city).eq('status','new'));
+    const n=r.count||0;
+    $('#aTabs [data-t="orders"]').innerHTML='الطلبات'+(n?`<i>${n}</i>`:'');
+  }catch(e){}
+  const mine=adm.city;
+  $('#aBody').innerHTML=LOADING;
+  try{
+    const html=await ({offers:admOffers,zones:admZones,orders:admOrders}[adm.tab])();
+    if(mine===adm.city) $('#aBody').innerHTML=html;
+  }catch(e){ console.error(e); $('#aBody').innerHTML=FAIL; }
+}
+$('#aBody').addEventListener('click',e=>{ if(e.target.id==='retry') renderAdmin(); });
+$('#aCity').onchange=e=>{adm.city=e.target.value;renderAdmin()};
+$('#aTabs').onclick=e=>{const t=e.target.closest('.tab');if(t){adm.tab=t.dataset.t;renderAdmin()}};
+const fail=(e,m='تعذّر تنفيذ العملية')=>{console.error(e);toast(m+': '+(e&&e.message?e.message:e));alert(m+'\n'+(e&&e.message?e.message:JSON.stringify(e)))};
+
+/* ---------- الصور ---------- */
+function shrinkFile(file,max=900,qlt=.78){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onerror=()=>rej(new Error('read'));
+    r.onload=()=>{
+      const im=new Image();
+      im.onerror=()=>rej(new Error('image'));
+      im.onload=()=>{
+        const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');
+        c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
+        c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+        c.toBlob(b=>b?res(b):rej(new Error('blob')),'image/jpeg',qlt);
+      };
+      im.src=r.result;
+    };
+    r.readAsDataURL(file);
+  });
+}
+async function uploadImg(file){
+  const blob=await shrinkFile(file);
+  const path=`${adm.city}/${uid()}.jpg`;
+  await q(sb.storage.from(BUCKET).upload(path,blob,{contentType:'image/jpeg',cacheControl:'31536000'}));
+  return sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+}
+const pathOf=u=>{const k='/object/public/'+BUCKET+'/';const i=String(u).indexOf(k);return i<0?null:decodeURIComponent(String(u).slice(i+k.length))};
+async function removeImgs(urls){
+  const ps=urls.map(pathOf).filter(Boolean);
+  if(ps.length){ try{ await sb.storage.from(BUCKET).remove(ps) }catch(e){ console.error(e) } }
+}
+
+/* =========================================================
+   العروض
+   ========================================================= */
+async function admOffers(){
+  const {data:os}=await q(sb.from('offers').select('*').eq('city_id',adm.city).order('created_at',{ascending:false}));
+  window._offers=os;
+  return `<button class="btn gold" style="width:100%;margin-bottom:12px" id="newOffer">+ عرض جديد</button>`+
+    (os.length?os.map(o=>`
+      <div class="rowc"><div class="th">${pic(o)}</div>
+        <div class="g"><b>${esc(o.name)}</b><span>${money(o.price)}</span><div class="note">${esc((o.sizes||[]).join(' · '))}</div></div>
+        <div class="acts"><button class="btn sm" data-edit="${o.id}">تعديل</button><button class="btn sm danger" data-del="${o.id}">حذف</button></div>
+      </div>`).join(''):'<div class="empty">لا توجد عروض في هذه المدينة. أضف أول عرض.</div>');
+}
+function offerForm(o){
+  const d=o?{name:o.name,price:o.price,desc:o.description,sizes:[...(o.sizes||[])],colors:[...(o.colors||[])],images:[...(o.images||[])],shape:o.shape||'tee'}
+           :{name:'',price:'',desc:'',sizes:['S','M','L','XL'],colors:[],images:[],shape:'tee'};
+  const added=[], removed=[];
+  const box=$('#formBox');
+  const draw=()=>{
+    box.innerHTML=`<div class="in">
+      <h2 style="margin:0 0 12px;font-family:var(--font-display)">${o?'تعديل العرض':'عرض جديد'}</h2>
+      <div class="field"><label class="req">اسم العرض</label><input id="oName" value="${esc(d.name)}"></div>
+      <div class="field"><label class="req">السعر (${CUR})</label><input id="oPrice" type="number" inputmode="numeric" min="0" value="${esc(d.price)}"></div>
+      <div class="field"><label>الوصف</label><textarea id="oDesc">${esc(d.desc)}</textarea></div>
+      <div class="field"><label>المقاسات (افصل بفاصلة)</label><input id="oSizes" value="${esc(d.sizes.join('، '))}"></div>
+      <div class="field"><label>الألوان (افصل بفاصلة)</label><input id="oColors" value="${esc(d.colors.join('، '))}"></div>
+      <div class="field"><label>الصور (حتى 4)</label>
+        <input id="oFiles" type="file" accept="image/*" multiple${d.images.length>=4?' disabled':''}>
+        <div class="imgs">${d.images.map((s,i)=>`<div class="im"><img src="${esc(s)}" alt=""><button data-rmimg="${i}" aria-label="حذف الصورة">×</button></div>`).join('')}</div>
+      </div>
+      <div style="display:flex;gap:10px"><button class="btn" style="flex:1" data-close>إلغاء</button><button class="btn gold" style="flex:2" id="oSave">حفظ</button></div>
+    </div>`;
+  };
+  const keep=()=>{d.name=$('#oName').value;d.price=$('#oPrice').value;d.desc=$('#oDesc').value;d.sizes=list($('#oSizes').value);d.colors=list($('#oColors').value)};
+  draw();
+  formCleanup=()=>{ removeImgs(added); };   // لو اتلغى النموذج نمسح الصور اللي اترفعت
+  box.onchange=async e=>{
+    if(e.target.id!=='oFiles') return;
+    keep();
+    const files=[...e.target.files].slice(0,4-d.images.length);
+    if(files.length) toast('جاري رفع الصور…');
+    for(const f of files){
+      try{ const u=await uploadImg(f); d.images.push(u); added.push(u); }
+      catch(err){ fail(err,'تعذّر رفع إحدى الصور'); }
+    }
+    draw();
+  };
+  box.onclick=async e=>{
+    if(e.target.closest('[data-close]')) return closeForm();
+    const r=e.target.closest('[data-rmimg]');
+    if(r){ keep(); const [u]=d.images.splice(+r.dataset.rmimg,1); if(added.includes(u)){added.splice(added.indexOf(u),1);removeImgs([u])} else removed.push(u); draw(); return; }
+    if(e.target.id==='oSave'){
+      keep();
+      if(!d.name.trim()||!(+d.price>=0)||d.price===''){toast('اكتب الاسم والسعر');return}
+      const b=e.target; b.disabled=true; b.textContent='جاري الحفظ…';
+      const rec={city_id:adm.city,name:d.name.trim(),description:d.desc.trim(),price:+d.price,sizes:d.sizes,colors:d.colors,images:d.images,shape:d.shape};
+      try{
+        if(o) await q(sb.from('offers').update(rec).eq('id',o.id)); else await q(sb.from('offers').insert(rec));
+        await removeImgs(removed);
+        formCleanup=null; closeSheet('#form'); renderAdmin(); toast('تم الحفظ');
+      }catch(err){ fail(err,'تعذّر الحفظ'); b.disabled=false; b.textContent='حفظ'; }
+    }
+  };
+  $('#form').classList.add('on'); document.body.style.overflow='hidden';
+}
+
+/* =========================================================
+   مناطق التوصيل
+   ========================================================= */
+async function admZones(){
+  const {data:zs}=await q(sb.from('delivery_zones').select('*').eq('city_id',adm.city).order('created_at'));
+  window._zones=zs;
+  return `<div class="addrow"><input id="zName" placeholder="اسم المنطقة"><input id="zPrice" type="number" inputmode="numeric" placeholder="السعر"><button class="btn gold" id="zAdd">إضافة</button></div>`+
+    (zs.length?zs.map(z=>`<div class="rowc"><div class="g"><b>${esc(z.name)}</b><span>${money(z.price)}</span></div>
+      <button class="btn sm" data-zedit="${z.id}">تعديل</button><button class="btn sm danger" data-zdel="${z.id}">حذف</button></div>`).join('')
+      :'<div class="empty">لا توجد مناطق توصيل لهذه المدينة.</div>');
+}
+function simpleForm(title,fields,onSave){
+  const box=$('#formBox');
+  box.innerHTML=`<div class="in"><h2 style="margin:0 0 12px;font-family:var(--font-display)">${title}</h2>
+    ${fields.map(f=>`<div class="field"><label class="req">${f.label}</label><input id="sf_${f.id}" ${f.type?`type="${f.type}" inputmode="numeric" min="0"`:''} value="${esc(f.value)}"></div>`).join('')}
+    <div style="display:flex;gap:10px"><button class="btn" style="flex:1" data-close>إلغاء</button><button class="btn gold" style="flex:2" id="sfSave">حفظ</button></div></div>`;
+  box.onchange=null; formCleanup=null;
+  box.onclick=async e=>{
+    if(e.target.closest('[data-close]')) return closeForm();
+    if(e.target.id==='sfSave'){
+      const v={}; fields.forEach(f=>v[f.id]=$('#sf_'+f.id).value.trim());
+      if(fields.some(f=>v[f.id]==='')){toast('كمّل الحقول');return}
+      const b=e.target; b.disabled=true;
+      try{ await onSave(v); closeSheet('#form'); await loadCities(); renderAdmin(); toast('تم الحفظ'); }
+      catch(err){ fail(err,'تعذّر الحفظ'); b.disabled=false; }
+    }
+  };
+  $('#form').classList.add('on'); document.body.style.overflow='hidden';
+  }
+  /* =========================================================
+   الطلبات
+   ========================================================= */
+const fmtDate=t=>new Date(t).toLocaleString('ar-EG',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
+async function admOrders(){
+  const {data:all}=await q(sb.from('orders').select('*').eq('city_id',adm.city).order('created_at',{ascending:false}));
+  const os=all.filter(o=>adm.of==='all'||(adm.of==='new'?o.status==='new':o.status==='delivered'));
+  const nNew=all.filter(o=>o.status==='new').length, nDl=all.length-nNew;
+  const seg=(k,l)=>`<button class="btn sm${adm.of===k?' gold':''}" data-of="${k}">${l}</button>`;
+  return `
+    <div class="seg">${seg('all','الكل ('+all.length+')')}${seg('new','جديدة ('+nNew+')')}${seg('delivered','مسلّمة ('+nDl+')')}<button class="btn sm" id="refresh">تحديث</button></div>
+    <div class="seg"><button class="btn sm danger" id="clrDone"${nDl?'':' disabled'}>حذف المسلّمة</button><button class="btn sm danger" id="clrAll"${all.length?'':' disabled'}>إفراغ كل الطلبات</button></div>`+
+    (os.length?os.map(o=>{const items=Array.isArray(o.items)?o.items:[];return `
+      <div class="ord${o.status==='delivered'?' done-o':''}">
+        <div class="hd"><b>طلب #${esc(o.id)}</b><span class="note">${fmtDate(o.created_at)}</span><span class="pill ${o.status==='new'?'new':'dl'}">${o.status==='new'?'جديد':'تم التسليم'}</span></div>
+        <div class="items">${items.map(i=>`<div class="line"><div class="th">${thumbHTML(i)}</div>
+          <div><div class="nm">${esc(i.name)} ×${(i.pieces||[]).length}</div><div class="mt">${(i.pieces||[]).map((p,k)=>`قطعة ${k+1}: ${esc(p.color||'—')} · ${esc(p.size||'—')}`).join('<br>')}</div></div></div>`).join('')}</div>
+        <dl class="cust">
+          <dt>الاسم</dt><dd>${esc(o.cust_name)}</dd>
+          <dt>واتساب</dt><dd dir="ltr" style="text-align:start">${esc(o.cust_wa)}</dd>
+          <dt>احتياطي</dt><dd dir="ltr" style="text-align:start">${esc(o.cust_bk)}</dd>
+          <dt>المستلم البديل</dt><dd>${esc(o.cust_rc)}</dd>
+          <dt>المنطقة</dt><dd>${esc(o.cust_area)}</dd>
+          <dt>التوصيل</dt><dd>${esc(o.zone_name)} — ${money(o.zone_price)}</dd>
+          ${o.cust_note?`<dt>ملاحظة</dt><dd>${esc(o.cust_note)}</dd>`:''}
+          <dt>الإجمالي</dt><dd style="color:var(--gold2);font-weight:700">${money(o.total)}</dd>
+        </dl>
+        <div class="oact">
+          <button class="btn sm ${o.status==='new'?'ok':''}" data-st="${o.id}" data-cur="${o.status}">${o.status==='new'?'تم التسليم':'إرجاع لجديد'}</button>
+          <a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/${digits(o.cust_wa)}">واتساب العميل</a>
+          <button class="btn sm danger" data-odel="${o.id}">حذف</button>
+        </div>
+      </div>`}).join(''):'<div class="empty">لا توجد طلبات هنا.</div>');
+}
+
+/* ---------- أحداث التبويبات ---------- */
+$('#aBody').addEventListener('click',async e=>{
+  const t=e.target, qa=a=>t.closest('['+a+']'); let b;
+  try{
+    if(t.id==='newOffer') return offerForm(null);
+    if(b=qa('data-edit')) return offerForm(window._offers.find(o=>o.id===b.dataset.edit));
+    if(b=qa('data-del')){
+      const o=window._offers.find(o=>o.id===b.dataset.del);
+      if(await confirmBox('حذف هذا العرض نهائياً؟','حذف')){ await q(sb.from('offers').delete().eq('id',o.id)); await removeImgs(o.images||[]); renderAdmin(); }
+      return;
+    }
+    if(t.id==='zAdd'){
+      const n=$('#zName').value.trim(), p=$('#zPrice').value;
+      if(!n||p===''||+p<0){toast('اكتب اسم المنطقة والسعر');return}
+      await q(sb.from('delivery_zones').insert({city_id:adm.city,name:n,price:+p})); renderAdmin(); return;
+    }
+    if(b=qa('data-zedit')){ const z=window._zones.find(z=>z.id===b.dataset.zedit);
+      return simpleForm('تعديل منطقة التوصيل',[{id:'n',label:'اسم المنطقة',value:z.name},{id:'p',label:'السعر',value:z.price,type:'number'}],v=>q(sb.from('delivery_zones').update({name:v.n,price:+v.p}).eq('id',z.id))); }
+    if(b=qa('data-zdel')){ if(await confirmBox('حذف منطقة التوصيل؟','حذف')){await q(sb.from('delivery_zones').delete().eq('id',b.dataset.zdel));renderAdmin()} return; }
+    if(b=qa('data-of')){ adm.of=b.dataset.of; return renderAdmin(); }
+    if(t.id==='refresh') return renderAdmin();
+    if(b=qa('data-st')){ const to=b.dataset.cur==='new'?'delivered':'new'; await q(sb.from('orders').update({status:to}).eq('id',b.dataset.st)); renderAdmin(); toast(to==='delivered'?'تم تسجيل التسليم':'رجع الطلب لجديد'); return; }
+    if(b=qa('data-odel')){ if(await confirmBox('حذف هذا الطلب؟','حذف')){await q(sb.from('orders').delete().eq('id',b.dataset.odel));renderAdmin()} return; }
+    if(t.id==='clrDone'){ if(await confirmBox('حذف كل الطلبات المسلّمة في '+admCity().name+'؟','حذف المسلّمة')){await q(sb.from('orders').delete().eq('city_id',adm.city).eq('status','delivered'));renderAdmin();toast('تم الحذف')} return; }
+    if(t.id==='clrAll'){ if(await confirmBox('إفراغ كل طلبات '+admCity().name+' (الجديدة والمسلّمة)؟ لا يمكن التراجع.','إفراغ الكل')){await q(sb.from('orders').delete().eq('city_id',adm.city));renderAdmin();toast('تم إفراغ الطلبات')} return; }
+  }catch(err){ fail(err); }
+});
+
+/* =========================================================
+   إدارة المدن
+   ========================================================= */
+function citiesSheet(){
+  const box=$('#formBox');
+  const draw=()=>{
+    box.innerHTML=`<div class="in"><h2 style="margin:0 0 12px;font-family:var(--font-display)">المدن</h2>
+      <div class="addrow" style="grid-template-columns:1fr auto"><input id="cNew" placeholder="اسم مدينة جديدة"><button class="btn gold" id="cAdd">إضافة</button></div>
+      ${CITIES.map(c=>`<div class="rowc"><div class="g"><b>${esc(c.name)}</b></div><button class="btn sm" data-cren="${c.id}">تعديل</button><button class="btn sm danger" data-cdel="${c.id}">حذف</button></div>`).join('')||'<div class="empty">لا توجد مدن.</div>'}
+      <button class="btn" style="width:100%;margin-top:6px" data-close>تم</button></div>`;
+  };
+  draw(); box.onchange=null; formCleanup=null;
+  box.onclick=async e=>{
+    const t=e.target; let b;
+    try{
+      if(t.closest('[data-close]')){ closeForm(); renderAdmin(); return; }
+      if(t.id==='cAdd'){ const n=$('#cNew').value.trim(); if(!n) return; await q(sb.from('cities').insert({name:n})); await loadCities(); draw(); return; }
+      if(b=t.closest('[data-cren]')){ const c=CITIES.find(c=>c.id===b.dataset.cren);
+        return simpleForm('تعديل اسم المدينة',[{id:'n',label:'اسم المدينة',value:c.name}],v=>q(sb.from('cities').update({name:v.n}).eq('id',c.id))); }
+      if(b=t.closest('[data-cdel]')){
+        const c=CITIES.find(c=>c.id===b.dataset.cdel);
+        if(await confirmBox(`حذف مدينة «${c.name}» هيمسح عروضها ومناطق توصيلها وطلباتها كمان. تكمل؟`,'حذف المدينة')){
+          try{ const {data:fs}=await sb.storage.from(BUCKET).list(c.id,{limit:1000}); if(fs&&fs.length) await sb.storage.from(BUCKET).remove(fs.map(f=>c.id+'/'+f.name)); }catch(e){}
+          await q(sb.from('cities').delete().eq('id',c.id)); await loadCities(); draw();
+        }
+      }
+    }catch(err){ fail(err); }
+  };
+  $('#form').classList.add('on'); document.body.style.overflow='hidden';
+}
+$('#aCities').onclick=citiesSheet;
+</script>
+</body>
+</html>
